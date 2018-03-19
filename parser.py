@@ -1,36 +1,45 @@
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup as bs
 import json
 import os
 
-#인코딩 알아내기
-import chardet
+LOGIN_INFO = {
+    'userId' : '',
+    'userPassword' : ''
+}
 
-## pyhon 파일 위치
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-#print(BASE_DIR)
+# session 생성, with 구문 안에서 유지시킴
+with requests.Session() as s :
+    # 우선 클리앙 홈페이지에 들어가 봅시다.
+    first_page = s.get('https://www.clien.net/service')
+    html = first_page.text
+    soup = bs(html, 'html.parser')
+    csrf = soup.find('input', {'name': '_csrf'}) # input태그 중에서 name이 _csrf인 것을 찾습니다.
+    print(csrf['value']) # 위에서 찾은 태그의 value를 가져옵니다.
 
-req = requests.get('http://www.naver.com')
+    # 이제 LOGIN_INFO에 csrf값을 넣어줍시다.
+    # (p.s.)Python3에서 두 dict를 합치는 방법은 {**dict1, **dict2} 으로 dict들을 unpacking하는 것입니다.
+    LOGIN_INFO = {**LOGIN_INFO, **{'_csrf': csrf['value']}}
+    print(LOGIN_INFO)
 
-html = req.text
+    # 이제 다시 로그인을 해봅시다.
+    login_req = s.post('https://www.clien.net/service/login', data=LOGIN_INFO)
+    # 어떤 결과가 나올까요? (200이면 성공!)
+    print(login_req.status_code)
 
-#html 소스를 BeautifulSoup을 이용해 파이선 객체로 변환한다.
-soup = BeautifulSoup(html, 'html.parser')
+    # 로그인이 되지 않으면 경고를 띄워줍시다.
+    if login_req.status_code != 200:
+        raise Exception('로그인이 되지 않았어요! 아이디와 비밀번호를 다시한번 확인해 주세요.')
 
-#print(soup)
-
-# a 태그 내용만 가져온다
-my_titles = soup.select(
-    'div > a'
-)
-
-data = {}
-
-for title in my_titles :
-    data[title.text] = title.get('href')
-
-# dump 할때 한글인 경우 깨지기 때문에 ensure_ascii=False 옵션을 줘야한다.
-# 여기서 좀 헤맨게 옵션을 줬는데도 깨져서 뭔가 봤더니 에디터 문제였다. 
-# vscode에서 encoding을 utf-8 > euc-kr로 변환했더니 잘 나온다.
-with open(os.path.join(BASE_DIR, 'result.json'), 'w+') as json_file :
-   json.dump(data, json_file, ensure_ascii=False)
+    # -- 여기서부터는 로그인이 된 세션이 유지됩니다 --
+    # 이제 장터의 게시글 하나를 가져와 봅시다. 아래 예제 링크는 중고장터 공지글입니다.
+    post_one = s.get('https://www.clien.net/service/board/rule/10707403')
+    soup = bs(post_one.text, 'html.parser') # Soup으로 만들어 줍시다.
+    # 아래 CSS Selector는 공지글 제목을 콕 하고 집어줍니다.
+    title = soup.select('#div_content > div.post_title > h3.post_subject > span')
+    contents = soup.select('#div_content > div.post_view > div.post_content > article > div.post_article.fr-view')
+    # HTML을 제대로 파싱한 뒤에는 .text속성을 이용합니다.
+    print(title[0].text) # 글제목의 문자만을 가져와봅시다.
+    # [0]을 하는 이유는 select로 하나만 가져와도 title자체는 리스트이기 때문입니다.
+    # 즉, 제목 글자는 title이라는 리스트의 0번(첫번째)에 들어가 있습니다.
+    print(contents[0].text) # 글내용도 마찬가지겠지요?
