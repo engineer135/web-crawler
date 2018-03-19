@@ -1,0 +1,50 @@
+1. django 설치
+pip install django
+
+2. 장고 프로젝트 만들기(끝에 . 옵션을 안주면 websaver 폴더 안에 websaver가 또 생김.. 여기서는 . 옵션 빼고 만든다..)
+django-admin startproject websaver
+
+3. 장고 앱 만들기(장고는 프로젝트와 그 안의 앱으로 관리됨. 이 앱은 하나의 기능을 담당하는 단위로 보면 된다.)
+python manage.py startapp parsed_data
+
+4. settings.py의 INSTALLED_APPS에 추가
+
+5. 첫 마이그레이션(DB 생성)
+python manage.py migrate
+
+6. parsed_data 앱 모델 만들기
+모델은 앱 단위로 만들어지고 구성됨. models.py 파일을 수정한다.
+itle와 link라는 column을 가진  BlogData 라는 이름의 Table을 DB에 만들어준다. 
+그리고 크롤링해온 데이터를 필드별로 저장하는것이 목적!
+
+7. 앱 DB 반영하기
+이제 해야 할 일은 Django가 모델을 관리하도록 하려면  makemigrations 를 통해 DB의 변경 정보를 정리하고,
+migrate 를 통해 실제 DB에 반영하는 과정을 진행해야 합니다.
+
+python manage.py makemigrations parsed_data
+python manage.py migrate parsed_data
+
+8. 크롤링 함수 만들기
+parse_blog.py 파일 생성
+
+9. django 환경 불러오기(py 파일에 4줄 추가)
+
+10. python parse_blog.py 실행했을때 아무 에러 안난다면, 저장된 것이다!
+
+11. 장고 어드민에서 확인하기
+
+12. 슈퍼유저 만들기
+python manage.py createsuperuser
+
+13. 앱에 Admin 등록하기
+장고가 어떤 앱을 admin에서 관리하도록 하려면 앱폴더 안의 admin.py 파일을 수정해줘야한다.
+
+14. 장고 서버 실행하기
+python manage.py runserver
+
+15. str 함수 오버라이딩하기
+기본적으로, models.Model 클래스의 경우 __str__ 함수는 ClassName + object 이다.
+관리자페이지에 좀 더 그럴싸하게 나오려면 str 함수를 오버라이딩해주는게 좋겠지?
+
+
+
