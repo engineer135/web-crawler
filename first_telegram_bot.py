@@ -1,7 +1,16 @@
 import telegram
 
 # 텔레그램에서 받은 토큰 넣어주면 된다.
-my_token = ''
+# 보안을 위해 토큰을 파일로 따로 관리하고 형상관리에서 제외시킨다.
+resources = {}
+with open('private_info.txt', 'r') as f :
+    lines = f.readlines()
+    for line in lines :
+        (key, val) = line.split()
+        resources[key] = val
+#print(resources)
+
+my_token = resources['my_token']
 bot = telegram.Bot(token = my_token)
 
 # 메세지 확인
@@ -23,5 +32,5 @@ bot = telegram.Bot(token = my_token)
 # 이때 링크 대신 아이디로 보내고 싶다면, sendMessage가 리턴해주는 데이터에서 찾을 수 있다.
 #id_channel = bot.sendMessage(chat_id='@hk0937test', text='안녕 채널에 메세지 한번 더 올려볼게!').chat_id
 #print(id_channel) #이제 이걸로 보내면 된다.
-id_channel = ''
+id_channel = resources['id_channel']
 bot.sendMessage(chat_id=id_channel, text='채널 아이디를 손에 얻었다!')
