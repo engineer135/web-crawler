@@ -1,5 +1,14 @@
 import requests
 from bs4 import BeautifulSoup
+import json
+import os
+
+#인코딩 알아내기
+import chardet
+
+## pyhon 파일 위치
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+#print(BASE_DIR)
 
 req = requests.get('http://www.naver.com')
 
@@ -15,45 +24,13 @@ my_titles = soup.select(
     'div > a'
 )
 
-# 이렇게 soup 객체로 담겨오기때문에, 원하는대로 사용이 가능함.
+data = {}
+
 for title in my_titles :
-    print(title.text)
-    print(title.get('href'))
+    data[title.text] = title.get('href')
 
-#result
-# (myvenv) D:\web-crawler>python parser.py
-# 뉴스스탠드 바로가기
-# #news_cast
-# 주제별캐스트 바로가기
-# #themecast
-# 타임스퀘어 바로가기
-# #time_square
-# 쇼핑캐스트 바로가기
-# #shop_cast
-# 로그인 바로가기
-# #account
-# 네이버를 시작페이지로
-# http://help.naver.com/support/alias/contents2/naverhome/naverhome_1.naver
-# 쥬니어네이버
-# http://jr.naver.com
-# 해피빈
-# http://happybean.naver.com/main/SectionMain.nhn
-# 한글 입력기
-# javascript:;
-# 자동완성 펼치기
-# javascript:;
-# 로그인
-# https://nid.naver.com/nidlogin.login
-# (이하생략) 
-
-# header = req.headers
-# status = req.status_code
-# is_ok = req.ok
-
-# print(html)
-# print('------------------------')
-# print(header)
-# print('------------------------')
-# print(status)
-# print('------------------------')
-# print(is_ok)
+# dump 할때 한글인 경우 깨지기 때문에 ensure_ascii=False 옵션을 줘야한다.
+# 여기서 좀 헤맨게 옵션을 줬는데도 깨져서 뭔가 봤더니 에디터 문제였다. 
+# vscode에서 encoding을 utf-8 > euc-kr로 변환했더니 잘 나온다.
+with open(os.path.join(BASE_DIR, 'result.json'), 'w+') as json_file :
+   json.dump(data, json_file, ensure_ascii=False)
