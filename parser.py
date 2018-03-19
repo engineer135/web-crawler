@@ -17,6 +17,14 @@ with requests.Session() as s :
     csrf = soup.find('input', {'name': '_csrf'}) # input태그 중에서 name이 _csrf인 것을 찾습니다.
     print(csrf['value']) # 위에서 찾은 태그의 value를 가져옵니다.
 
+    # 로그인 전에 로그아웃을 해보자
+#    logout_req = s.post('https://www.clien.net/service/logout', data={'_csrf':csrf['value']})
+#    print(logout_req.status_code)
+
+#    if logout_req.status_code != 200 :
+#        print('logout 실패...')
+
+
     # 이제 LOGIN_INFO에 csrf값을 넣어줍시다.
     # (p.s.)Python3에서 두 dict를 합치는 방법은 {**dict1, **dict2} 으로 dict들을 unpacking하는 것입니다.
     LOGIN_INFO = {**LOGIN_INFO, **{'_csrf': csrf['value']}}
@@ -42,4 +50,4 @@ with requests.Session() as s :
     print(title[0].text) # 글제목의 문자만을 가져와봅시다.
     # [0]을 하는 이유는 select로 하나만 가져와도 title자체는 리스트이기 때문입니다.
     # 즉, 제목 글자는 title이라는 리스트의 0번(첫번째)에 들어가 있습니다.
-    print(contents[0].text) # 글내용도 마찬가지겠지요?
+    #print(contents[0].text) # 글내용도 마찬가지겠지요?
