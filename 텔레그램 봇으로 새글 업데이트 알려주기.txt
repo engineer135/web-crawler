@@ -1,0 +1,10 @@
+https://blog.psangwoo.com/coding/2016/12/08/python-telegram-bot-1.html
+여기 잘 나와있다.
+
+1. python-telegram-bot 설치(https://github.com/python-telegram-bot/python-telegram-bot)
+pip install python-telegram-bot
+
+2. telegram에서 봇 만들기
+텔레그램 실행 후 botfather 검색후 추가하면 봇을 만들 수 있다.
+여기서 아이디, 이름을 지어주고 토큰을 받아온다.
+
