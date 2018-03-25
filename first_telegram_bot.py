@@ -1,5 +1,7 @@
 import telegram
 
+# 텔레그램 봇은 pip install python-telegram-bot 이걸루 설치한다.
+
 # 텔레그램에서 받은 토큰 넣어주면 된다.
 # 보안을 위해 토큰을 파일로 따로 관리하고 형상관리에서 제외시킨다.
 resources = {}
